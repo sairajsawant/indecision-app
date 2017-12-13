@@ -12,7 +12,7 @@ const template = (
       {appInfo.subtitle && <p>{appInfo.subtitle}</p>}
     </div>
 );
-function getLoc(loc) {
+const getLoc = (loc) => {
   const knownLoc = (<p>Location : {loc}</p>);
   return (loc ? knownLoc:undefined);
 }
