@@ -1,28 +1,24 @@
 'use strict';
 
-console.log('App.js is running');
-//JSX -JavaScript XML
 var appInfo = {
-  title: 'Indecision App',
-  subtitle: 'An app helping u do!',
-  options: []
-};
-var onFormSubmit = function onFormSubmit(e) {
-  //form returns e object
-  e.preventDefault();
-  var option = e.target.elements.option.value;
-  if (option) {
-    appInfo.options.push(option);
-    e.target.elements.option.value = '';
-    renderer();
-  }
-};
-var removeAll = function removeAll() {
-  appInfo.options = [];
-  renderer();
+  title: 'Visibility Toggle',
+  details: 'Hey, this blah blah!'
 };
 var appRoot = document.getElementById('app');
+var showHide = false;
+var showHideText = 'Show ';
+var toggleDetails = function toggleDetails() {
+  if (!showHide) {
+    showHide = true;
+    showHideText = 'Hide ';
+  } else {
+    showHide = false;
+    showHideText = 'Show ';
+  }
+  renderer();
+};
 function renderer() {
+
   var template = React.createElement(
     'div',
     null,
@@ -31,37 +27,17 @@ function renderer() {
       null,
       appInfo.title
     ),
-    appInfo.subtitle && React.createElement(
-      'p',
-      null,
-      appInfo.subtitle
-    ),
     React.createElement(
       'button',
-      { onClick: removeAll },
-      'Remove All options!'
+      { onClick: toggleDetails },
+      showHideText,
+      ' details'
     ),
-    React.createElement(
+    showHide ? React.createElement(
       'p',
       null,
-      appInfo.options.length
-    ),
-    React.createElement(
-      'ol',
-      null,
-      React.createElement('li', null),
-      React.createElement('li', null)
-    ),
-    React.createElement(
-      'form',
-      { onSubmit: onFormSubmit },
-      React.createElement('input', { type: 'text', name: 'option' }),
-      React.createElement(
-        'button',
-        null,
-        'Add Option'
-      )
-    )
+      appInfo.details
+    ) : undefined
   );
   ReactDOM.render(template, appRoot);
 }
