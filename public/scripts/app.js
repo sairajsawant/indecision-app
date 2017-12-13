@@ -1,62 +1,68 @@
 'use strict';
 
-var nameLet = 'Sairaj';
-console.log('nameLet', nameLet);
-
-var nameConst = 'raj';
-console.log('nameConst', nameConst);
-
-// let const variables cannot be redefined , var can be!
-// let const are function scoped and block level scoped,
-// var are only function scoped
-
-
-//arrow functions === Always Anonymous!
-
-var squared = function squared(x) {
-  return x * x;
+console.log('App.js is running');
+//JSX -JavaScript XML
+var appInfo = {
+  title: 'Indecision App',
+  subtitle: 'An app helping u do!',
+  options: []
 };
-
-console.log(squared(9));
-
-var getFirstName = function getFirstName(fullName) {
-  return fullName.split(' ')[0];
-};
-
-console.log(getFirstName('Sairaj Sawnt'));
-
-//arrow functions === no access to arguments object!
-
-var user = {
-  name: 'Sairaj',
-  cities: ['Pune', 'Chiplun'],
-  printCitiesLived: function printCitiesLived() {
-    var _this = this;
-
-    //using Map
-    return this.cities.map(function (city) {
-      return _this.name + ' has lived in ' + city;
-    });
-    //using forEach
-    //   this.cities.forEach((city) => {
-    //     console.log(this.name + ' has lived in ' + city);
-    //   });
+var onFormSubmit = function onFormSubmit(e) {
+  //form returns e object
+  e.preventDefault();
+  var option = e.target.elements.option.value;
+  if (option) {
+    appInfo.options.push(option);
+    e.target.elements.option.value = '';
+    renderer();
   }
 };
-console.log(user.printCitiesLived());
-
-//challenge area
-
-var multiplier = {
-  numbers: [5, 6, 7],
-  multiplyBy: 2,
-  multiply: function multiply() {
-    var _this2 = this;
-
-    return this.numbers.map(function (multiplicand) {
-      return multiplicand * _this2.multiplyBy;
-    });
-  }
+var removeAll = function removeAll() {
+  appInfo.options = [];
+  renderer();
 };
-
-console.log(multiplier.multiply());
+var appRoot = document.getElementById('app');
+function renderer() {
+  var template = React.createElement(
+    'div',
+    null,
+    React.createElement(
+      'h1',
+      null,
+      appInfo.title
+    ),
+    appInfo.subtitle && React.createElement(
+      'p',
+      null,
+      appInfo.subtitle
+    ),
+    React.createElement(
+      'button',
+      { onClick: removeAll },
+      'Remove All options!'
+    ),
+    React.createElement(
+      'p',
+      null,
+      appInfo.options.length
+    ),
+    React.createElement(
+      'ol',
+      null,
+      React.createElement('li', null),
+      React.createElement('li', null)
+    ),
+    React.createElement(
+      'form',
+      { onSubmit: onFormSubmit },
+      React.createElement('input', { type: 'text', name: 'option' }),
+      React.createElement(
+        'button',
+        null,
+        'Add Option'
+      )
+    )
+  );
+  ReactDOM.render(template, appRoot);
+}
+renderer();
