@@ -18,19 +18,64 @@ var IndecisionApp = function (_React$Component) {
 
     _this.handlePick = _this.handlePick.bind(_this);
     _this.handleDeleteOptions = _this.handleDeleteOptions.bind(_this);
+    _this.handleDeleteOption = _this.handleDeleteOption.bind(_this);
     _this.handleAddOption = _this.handleAddOption.bind(_this);
     _this.state = {
-      options: props.options
+      options: []
     };
     return _this;
   }
 
   _createClass(IndecisionApp, [{
+    key: 'componentDidMount',
+    value: function componentDidMount() {
+      //CLASS BASED Component LIFECYCLE METTHODS
+
+      try {
+        var json = localStorage.getItem('options');
+        var options = JSON.parse(json);
+
+        if (options) {
+          this.setState(function () {
+            return { options: options };
+          });
+        }
+      } catch (e) {}
+    }
+  }, {
+    key: 'componentDidUpdate',
+    value: function componentDidUpdate(prevProps, prevState) {
+      if (prevState.options.length !== this.state.options.length) {
+        var json = JSON.stringify(this.state.options); //convert optionsarray to string
+        localStorage.setItem('options', json);
+      }
+    }
+  }, {
+    key: 'componentWillUnmount',
+    value: function componentWillUnmount() {
+
+      console.log('componentWillUnmount');
+    }
+  }, {
     key: 'handleDeleteOptions',
     value: function handleDeleteOptions() {
+      // this.setState(() => {
+      //   return {
+      //     options : []
+      //   };
+      // });
       this.setState(function () {
+        return { options: [] };
+      }); //a shorthand arrow function
+    }
+  }, {
+    key: 'handleDeleteOption',
+    value: function handleDeleteOption(optionToRemove) {
+      this.setState(function (prevState) {
         return {
-          options: []
+          options: prevState.options.filter(function (option) {
+            return optionToRemove !== option;
+          })
         };
       });
     }
@@ -69,7 +114,8 @@ var IndecisionApp = function (_React$Component) {
         }),
         React.createElement(Options, {
           options: this.state.options,
-          handleDeleteOptions: this.handleDeleteOptions
+          handleDeleteOptions: this.handleDeleteOptions,
+          handleDeleteOption: this.handleDeleteOption
         }),
         React.createElement(AddOption, {
           handleAddOption: this.handleAddOption
@@ -81,9 +127,6 @@ var IndecisionApp = function (_React$Component) {
   return IndecisionApp;
 }(React.Component);
 
-IndecisionApp.defaultProps = {
-  options: []
-};
 var Header = function Header(props) {
   return React.createElement(
     'div',
@@ -152,8 +195,13 @@ var Options = function Options(props) {
       { onClick: props.handleDeleteOptions },
       'Remove All!'
     ),
+    props.options.length === 0 && React.createElement(
+      'p',
+      null,
+      'Please add an Option to Get Started'
+    ),
     props.options.map(function (singleOption) {
-      return React.createElement(Option, { key: singleOption, optionText: singleOption });
+      return React.createElement(Option, { key: singleOption, optionText: singleOption, handleDeleteOption: props.handleDeleteOption });
     })
   );
 };
@@ -180,6 +228,13 @@ var Option = function Option(props) {
       'p',
       null,
       props.optionText
+    ),
+    React.createElement(
+      'button',
+      { onClick: function onClick(e) {
+          props.handleDeleteOption(props.optionText);
+        } },
+      'Remove'
     )
   );
 };
@@ -214,7 +269,12 @@ var AddOption = function (_React$Component2) {
       e.preventDefault(); //remove fulll page refresh
       var opt = e.target.elements.option.value.trim();
       var error = this.props.handleAddOption(opt);
-      e.target.elements.option.value = '';
+      if (!error) {
+        e.target.elements.option.value = '';
+      }
+      // this.setState(() => {
+      //   return {error};
+      // });
       this.setState(function () {
         return { error: error };
       });
@@ -257,4 +317,4 @@ var AddOption = function (_React$Component2) {
 // };
 
 
-ReactDOM.render(React.createElement(IndecisionApp, { options: ['Code', 'Learn'] }), document.getElementById('app'));
+ReactDOM.render(React.createElement(IndecisionApp, null), document.getElementById('app'));
